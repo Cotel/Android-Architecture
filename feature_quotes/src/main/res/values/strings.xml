@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="programming_quotes">Programming quotes</string>
+    <string name="generic_loading_error">Oops! Something happened while loading</string>
+    <string name="try_again">Try again</string>
+</resources>
