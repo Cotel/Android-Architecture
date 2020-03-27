@@ -59,5 +59,7 @@ dependencies {
     implementation(LibraryDependency.ROOM_KTX)
     kapt(LibraryDependency.ROOM_KAPT)
 
+    implementation(LibraryDependency.COIL)
+
     addTestDependencies()
 }

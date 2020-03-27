@@ -7,8 +7,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
+import kotlinx.android.synthetic.main.activity_entry.*
 
 class EntryActivity : AppCompatActivity() {
+
+    companion object {
+        private const val FEATURE_FLAG = "FEATURE_FLAG"
+
+        private const val CN_FLAG = "CHUCK_NORRIS"
+        private const val PM_FLAG = "PROGRAMMING"
+    }
 
     private val splitInstallManager: SplitInstallManager by lazy {
         SplitInstallManagerFactory.create(applicationContext)
@@ -18,16 +26,22 @@ class EntryActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_entry)
 
-        installQuotesFeature()
+        programming_quotes_button.setOnClickListener {
+            installQuotesFeature(PM_FLAG)
+        }
+
+        chucknorris_quotes_button.setOnClickListener {
+            installQuotesFeature(CN_FLAG)
+        }
     }
 
-    private fun installQuotesFeature() {
+    private fun installQuotesFeature(flag: String) {
         val installRequest = SplitInstallRequest.newBuilder()
             .addModule("feature_quotes")
             .build()
 
         splitInstallManager.startInstall(installRequest)
-            .addOnSuccessListener { navigateToQuotesFeature() }
+            .addOnSuccessListener { navigateToQuotesFeature(flag) }
             .addOnFailureListener { showInstallQuotesFeatureError() }
     }
 
@@ -40,13 +54,14 @@ class EntryActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun navigateToQuotesFeature() {
+    private fun navigateToQuotesFeature(flag: String) {
         if (splitInstallManager.installedModules.contains("feature_quotes")) {
             val intent = Intent()
             intent.setClassName(
                 BuildConfig.APPLICATION_ID,
                 "com.cotel.architecture.quotes.presentation.QuotesActivity"
             )
+            intent.extras?.putString(FEATURE_FLAG, flag)
             startActivity(intent)
             finish()
         }
