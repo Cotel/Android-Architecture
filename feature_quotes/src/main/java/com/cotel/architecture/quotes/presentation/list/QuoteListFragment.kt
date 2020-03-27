@@ -54,7 +54,7 @@ class QuoteListFragment : BaseViewModelFragment<ViewState,
     private fun renderErrorLoading() {
         quotes_list_error.visible()
         quotes_list_retry_button.setOnClickListener {
-            viewModel.loadQuotes(forceRefresh = true)
+            viewModel.loadAllQuotes(forceRefresh = true)
         }
     }
 
@@ -70,6 +70,7 @@ class QuoteListFragment : BaseViewModelFragment<ViewState,
     override fun handleSideEffect(sideEffect: SideEffect) {
         when (sideEffect) {
             is SideEffect.ErrorSavingQuote -> showErrorSaveQuoteToast()
+            is SideEffect.ErrorRemovingQuote -> showErrorRemoveQuoteToast()
         }
     }
 
@@ -84,7 +85,7 @@ class QuoteListFragment : BaseViewModelFragment<ViewState,
                 )
             )
             it.addOnScrollListener(
-                EndlessScrollListener { viewModel.loadQuotes() }
+                EndlessScrollListener { viewModel.loadAllQuotes() }
             )
         }
 
@@ -110,5 +111,13 @@ class QuoteListFragment : BaseViewModelFragment<ViewState,
                 "Fail while saving quote",
                 Toast.LENGTH_SHORT
             ).show()
+    }
+
+    private fun showErrorRemoveQuoteToast() {
+        Toast.makeText(
+            requireContext(),
+            "Fail while removing quote",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

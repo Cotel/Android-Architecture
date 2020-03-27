@@ -35,15 +35,16 @@ class QuoteListViewModel(
         }
 
     init {
-        loadQuotes()
+        loadAllQuotes()
     }
 
-    fun loadQuotes(forceRefresh: Boolean = false) {
+    fun loadAllQuotes(forceRefresh: Boolean = false) {
+        if (internalState.currentFilter == Filter.SAVED) return
+
         if (forceRefresh) {
             internalState = internalState.copy(pagination = PaginationState())
         }
 
-        val allQuotes = internalState.allQuotes
         val pagination = internalState.pagination
 
         if (pagination.canRequestNextPage()) {
@@ -54,24 +55,24 @@ class QuoteListViewModel(
                     .attempt()
                     .unsafeRunSync()
                     .fold(
-                        ifLeft = {
-                            internalState = internalState.copy(
-                                pagination = pagination
-                                    .isNotLoading()
-                                    .noMorePages(),
-                                hasError = true
-                            )
-                        },
-                        ifRight = { quotes ->
-                            internalState = internalState.copy(
-                                pagination = pagination
-                                    .isNotLoading()
-                                    .nextPage(),
-                                allQuotes = allQuotes + quotes
-                            )
-                        }
+                        ifLeft = { handlePageLoadError() },
+                        ifRight = this@QuoteListViewModel::handlePageLoadSuccess
                     )
             }
+        }
+    }
+
+    private fun loadSavedQuotes() {
+        viewModelScope.launch {
+            repository.getSavedQuotes()
+                .attempt()
+                .unsafeRunSync()
+                .fold(
+                    ifLeft = { },
+                    ifRight = {
+                        internalState = internalState.copy(savedQuotes = it)
+                    }
+                )
         }
     }
 
@@ -81,6 +82,7 @@ class QuoteListViewModel(
 
     fun handleSavedFilterPressed() {
         internalState = internalState.copy(currentFilter = Filter.SAVED)
+        loadSavedQuotes()
     }
 
     fun handleQuoteClicked(quote: Quote) {
@@ -96,17 +98,58 @@ class QuoteListViewModel(
                         },
                         ifRight = {
                             val copy = quote.copy(isSaved = true)
-                            internalState = internalState.copy(
-                                allQuotes = internalState
-                                    .allQuotes
-                                    .map {
-                                        if (it.id == quote.id) copy else it
-                                    }
-                            )
+                            updateQuote(copy)
+                        }
+                    )
+            } else {
+                repository.removeQuote(quote)
+                    .attempt()
+                    .unsafeRunSync()
+                    .fold(
+                        ifLeft = {
+                            _sideEffects
+                                .send(SideEffect.ErrorRemovingQuote(quote))
+                        },
+                        ifRight = {
+                            val copy = quote.copy(isSaved = false)
+                            updateQuote(copy)
                         }
                     )
             }
         }
+    }
+
+    private fun handlePageLoadSuccess(quotes: List<Quote>) {
+        val pagination = internalState.pagination
+        val allQuotes = internalState.allQuotes
+
+        internalState = internalState.copy(
+            pagination = pagination
+                .isNotLoading()
+                .nextPage(),
+            allQuotes = allQuotes + quotes
+        )
+    }
+
+    private fun handlePageLoadError() {
+        val pagination = internalState.pagination
+
+        internalState = internalState.copy(
+            pagination = pagination
+                .isNotLoading()
+                .noMorePages(),
+            hasError = true
+        )
+    }
+
+    private fun updateQuote(quote: Quote) {
+        internalState = internalState.copy(
+            allQuotes = internalState
+                .allQuotes
+                .map {
+                    if (it.id == quote.id) quote else it
+                }
+        )
     }
 
     sealed class ViewState {
@@ -119,15 +162,14 @@ class QuoteListViewModel(
     private data class QuotesState(
         val hasError: Boolean = false,
         val allQuotes: List<Quote> = emptyList(),
+        val savedQuotes: List<Quote> = emptyList(),
         val currentFilter: Filter = Filter.DISCOVER,
         val pagination: PaginationState = PaginationState()
-    ) {
-        val savedQuotes: List<Quote>
-            get() = allQuotes.filter { it.isSaved }
-    }
+    )
 
     sealed class SideEffect {
         data class ErrorSavingQuote(val quote: Quote) : SideEffect()
+        data class ErrorRemovingQuote(val quote: Quote) : SideEffect()
     }
 
     private enum class Filter {

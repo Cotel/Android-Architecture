@@ -13,16 +13,20 @@ class DefaultQuotesRepository(
 ) : QuotesRepository {
 
     override fun getQuotes(page: Int): IO<List<Quote>> = IO.fx {
+        val savedQuotes = !effect { localDataSource.getSavedQuotes() }
         val networkQuotes = !effect { networkDataSource.getQuotesByPage(page) }
-        !networkQuotes
-            .parTraverse { quote -> effect { checkIfQuoteIsSaved(quote) } }
+        networkQuotes.map { networkQuote ->
+            val savedQuote = savedQuotes.find { networkQuote.id == it.id }
+            savedQuote ?: networkQuote
+        }
     }
+
+    override fun getSavedQuotes(): IO<List<Quote>> =
+        IO.effect { localDataSource.getSavedQuotes() }
 
     override fun saveQuote(quote: Quote): IO<Unit> =
         IO.effect { localDataSource.saveQuote(quote) }
 
-    private suspend fun checkIfQuoteIsSaved(quote: Quote): Quote =
-        localDataSource.findSavedQuoteById(quote.id) ?: quote
-
-
+    override fun removeQuote(quote: Quote): IO<Unit> =
+        IO.effect { localDataSource.removeQuote(quote) }
 }

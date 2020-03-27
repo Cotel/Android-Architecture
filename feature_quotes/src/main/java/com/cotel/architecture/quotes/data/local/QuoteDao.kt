@@ -1,6 +1,7 @@
 package com.cotel.architecture.quotes.data.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.cotel.architecture.quotes.data.dto.DbQuote
@@ -15,4 +16,7 @@ interface QuoteDao {
 
     @Query("SELECT * FROM quote WHERE id == :id")
     suspend fun queryById(id: String): DbQuote?
+
+    @Delete
+    suspend fun remove(quote: DbQuote)
 }

@@ -15,4 +15,7 @@ class QuotesLocalDatasource(
 
     suspend fun saveQuote(quote: Quote): Unit =
         dao.insert(quote.toDbQuote())
+
+    suspend fun removeQuote(quote: Quote): Unit =
+        dao.remove(quote.toDbQuote())
 }
