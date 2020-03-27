@@ -16,6 +16,7 @@ object GradlePluginId {
     const val KOTLIN_ANDROID = "org.jetbrains.kotlin.android"
     const val KOTLIN_ANDROID_EXTENSIONS =
         "org.jetbrains.kotlin.android.extensions"
+    const val KOTLIN_ANNOTATION_PROCESSOR = "kapt"
     const val GRADLE_VERSION_PLUGIN = "com.github.ben-manes.versions"
 }
 

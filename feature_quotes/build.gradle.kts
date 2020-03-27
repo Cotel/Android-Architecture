@@ -2,6 +2,7 @@ plugins {
     id(GradlePluginId.ANDROID_DYNAMIC_FEATURE)
     id(GradlePluginId.KOTLIN_ANDROID)
     id(GradlePluginId.KOTLIN_ANDROID_EXTENSIONS)
+    kotlin(GradlePluginId.KOTLIN_ANNOTATION_PROCESSOR)
 }
 
 android {
@@ -51,6 +52,12 @@ android {
 dependencies {
     implementation(project(ModuleDependency.APP))
     implementation(project(ModuleDependency.LIBRARY_NETWORK))
+
+    implementation(LibraryDependency.ARROW_FX)
+
+    implementation(LibraryDependency.ROOM)
+    implementation(LibraryDependency.ROOM_KTX)
+    kapt(LibraryDependency.ROOM_KAPT)
 
     addTestDependencies()
 }

@@ -16,13 +16,29 @@
         android:layout_height="wrap_content"
         tools:text="Computer Science is no more about computers than astronomy is about telescopes." />
 
-    <TextView
-        android:id="@+id/quote_author"
-        style="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
         android:layout_marginTop="8dp"
-        tools:text="Edsger W. Dijkstra" />
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/quote_is_saved"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:src="@drawable/ic_favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/quote_author"
+            style="@style/TextAppearance.AppCompat.Caption"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="end|bottom"
+
+            tools:text="Edsger W. Dijkstra" />
+    </LinearLayout>
 
 </LinearLayout>

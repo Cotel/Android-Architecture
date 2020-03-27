@@ -3,4 +3,6 @@
     <string name="programming_quotes">Programming quotes</string>
     <string name="generic_loading_error">Oops! Something happened while loading</string>
     <string name="try_again">Try again</string>
+    <string name="discover">Discover</string>
+    <string name="saved">Saved</string>
 </resources>

@@ -45,7 +45,7 @@ class EntryActivity : AppCompatActivity() {
             val intent = Intent()
             intent.setClassName(
                 BuildConfig.APPLICATION_ID,
-                "com.cotel.architecture.quotes.presentation.QuoteListActivity"
+                "com.cotel.architecture.quotes.presentation.QuotesActivity"
             )
             startActivity(intent)
             finish()

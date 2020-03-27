@@ -17,6 +17,8 @@ internal object LibraryVersion {
     const val LIFECYCLE = "1.1.1"
     const val LIFECYCLE_VIEW_MODEL_KTX = "2.2.0"
 
+    const val ROOM = "2.2.3"
+
     const val COIL = "0.9.1"
 
     const val KOIN = "2.1.4"
@@ -70,8 +72,14 @@ object LibraryDependency {
         "androidx.lifecycle:lifecycle-viewmodel-ktx:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
     const val LIFECYCLE_RUNTIME_KTX =
         "androidx.lifecycle:lifecycle-runtime-ktx:${LibraryVersion.LIFECYCLE_VIEW_MODEL_KTX}"
+
+    const val ROOM = "androidx.room:room-runtime:${LibraryVersion.ROOM}"
+    const val ROOM_KAPT = "androidx.room:room-compiler:${LibraryVersion.ROOM}"
+    const val ROOM_KTX = "androidx.room:room-ktx:${LibraryVersion.ROOM}"
+
     const val COIL = "io.coil-kt:coil:${LibraryVersion.COIL}"
 
     const val ARROW_CORE = "io.arrow-kt:arrow-core:${LibraryVersion.ARROW}"
     const val ARROW_SYNTAX = "io.arrow-kt:arrow-syntax:${LibraryVersion.ARROW}"
+    const val ARROW_FX = "io.arrow-kt:arrow-fx:${LibraryVersion.ARROW}"
 }

@@ -12,7 +12,8 @@
     </dist:module>
 
     <application>
-        <activity android:name=".presentation.QuoteListActivity" />
+        <activity android:name=".presentation.QuotesActivity"
+            android:theme="@style/AppTheme.QuoteTheme"/>
     </application>
 </manifest>
 

@@ -9,18 +9,18 @@ import androidx.lifecycle.lifecycleScope
 import com.cotel.architecture.base.presentation.viewmodel.BaseViewModel
 import kotlinx.coroutines.channels.consumeEach
 
-abstract class BaseViewModelFragment<VS, SE>(
+abstract class BaseViewModelFragment<VS, SE, VM : BaseViewModel<VS, SE>>(
     @LayoutRes layoutResId: Int
 ) : Fragment(layoutResId) {
 
-    protected abstract val viewModel: BaseViewModel<VS, SE>
+    protected abstract val viewModel: VM
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.viewState.observe(
             viewLifecycleOwner,
-            Observer(this::renderState)
+            Observer(this::renderViewState)
         )
 
         lifecycleScope.launchWhenCreated {
@@ -28,7 +28,7 @@ abstract class BaseViewModelFragment<VS, SE>(
         }
     }
 
-    abstract fun renderState(viewState: VS)
+    abstract fun renderViewState(viewState: VS)
     abstract fun handleSideEffect(sideEffect: SE)
 
 }
