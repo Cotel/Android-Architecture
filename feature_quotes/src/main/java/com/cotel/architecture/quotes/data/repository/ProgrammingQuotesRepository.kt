@@ -2,13 +2,13 @@ package com.cotel.architecture.quotes.data.repository
 
 import arrow.fx.IO
 import arrow.fx.extensions.fx
+import com.cotel.architecture.quotes.data.datasource.ProgrammingQuotesNetworkDataSource
 import com.cotel.architecture.quotes.data.datasource.QuotesLocalDatasource
-import com.cotel.architecture.quotes.data.datasource.QuotesNetworkDataSource
 import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.domain.repository.QuotesRepository
 
-class DefaultQuotesRepository(
-    private val networkDataSource: QuotesNetworkDataSource,
+class ProgrammingQuotesRepository(
+    private val networkDataSource: ProgrammingQuotesNetworkDataSource,
     private val localDataSource: QuotesLocalDatasource
 ) : QuotesRepository {
 

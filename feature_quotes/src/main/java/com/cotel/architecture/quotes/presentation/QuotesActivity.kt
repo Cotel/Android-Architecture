@@ -3,22 +3,20 @@ package com.cotel.architecture.quotes.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.cotel.architecture.quotes.R
-import com.cotel.architecture.quotes.presentation.list.QuoteListFragment
-import com.cotel.architecture.quotes.presentation.list.ejectFeature
-import com.cotel.architecture.quotes.presentation.list.injectFeature
+import com.cotel.architecture.quotes.presentation.list.*
 
 class QuotesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quotes)
-        injectFeature()
+        injectChuckNorrisFeature()
 
 
         navigateToQuotesList()
     }
 
     override fun onDestroy() {
-        ejectFeature()
+        ejectChuckNorrisFeature()
         super.onDestroy()
     }
 

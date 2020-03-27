@@ -4,7 +4,7 @@ import com.cotel.architecture.quotes.data.mapper.ProgrammingQuotesMapper
 import com.cotel.architecture.quotes.data.network.ProgrammingQuotesService
 import com.cotel.architecture.quotes.domain.model.Quote
 
-class QuotesNetworkDataSource(
+class ProgrammingQuotesNetworkDataSource(
     private val service: ProgrammingQuotesService
 ) : ProgrammingQuotesMapper {
 
