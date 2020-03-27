@@ -61,7 +61,7 @@ class EntryActivity : AppCompatActivity() {
                 BuildConfig.APPLICATION_ID,
                 "com.cotel.architecture.quotes.presentation.QuotesActivity"
             )
-            intent.extras?.putString(FEATURE_FLAG, flag)
+            intent.putExtra(FEATURE_FLAG, flag)
             startActivity(intent)
             finish()
         }

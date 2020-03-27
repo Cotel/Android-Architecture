@@ -17,7 +17,7 @@ class QuotesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quotes)
 
-        val flag = intent.extras?.getString(FEATURE_FLAG) ?: PM_FLAG
+        val flag = intent.getStringExtra(FEATURE_FLAG) ?: PM_FLAG
 
         if (flag == CN_FLAG) {
             injectChuckNorrisFeature()
@@ -29,7 +29,7 @@ class QuotesActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        val flag = intent.extras?.getString(FEATURE_FLAG) ?: PM_FLAG
+        val flag = intent.getStringExtra(FEATURE_FLAG) ?: PM_FLAG
 
         if (flag == CN_FLAG) {
             ejectChuckNorrisFeature()
