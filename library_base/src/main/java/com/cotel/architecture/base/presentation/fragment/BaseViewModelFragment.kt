@@ -41,5 +41,4 @@ abstract class BaseViewModelFragment<VS, SE, VM : BaseViewModel<VS, SE>> :
 
     abstract fun renderViewState(viewState: VS)
     abstract fun handleSideEffect(sideEffect: SE)
-
 }

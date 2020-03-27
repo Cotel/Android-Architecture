@@ -30,5 +30,4 @@ abstract class BaseViewModelActivity<VS, SE, VM : BaseViewModel<VS, SE>> :
 
     protected abstract fun renderViewState(viewState: VS)
     protected abstract fun handleSideEffect(sideEffect: SE)
-
 }

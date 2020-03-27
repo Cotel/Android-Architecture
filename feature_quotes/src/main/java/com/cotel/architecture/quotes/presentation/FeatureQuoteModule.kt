@@ -42,7 +42,6 @@ val allProgrammingModules = listOf(
     programmingQuoteListModule
 )
 
-
 // Chuck Norris modules
 
 fun injectChuckNorrisFeature() =

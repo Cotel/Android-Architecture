@@ -25,5 +25,4 @@ class ArchitectureApp : Application() {
             if (BuildConfig.DEBUG) androidLogger()
         }
     }
-
 }

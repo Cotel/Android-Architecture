@@ -11,5 +11,4 @@ class ProgrammingQuotesNetworkDataSource(
     suspend fun getQuotesByPage(page: Int): List<Quote> =
         service.getQuotesByPage(page)
             .map { apiQuote -> apiQuote.toQuote() }
-
 }

@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import com.cotel.architecture.base.presentation.fragment.BaseViewModelFragment
-import com.cotel.architecture.quotes.R
 import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.SideEffect
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.ViewState

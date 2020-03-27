@@ -56,7 +56,6 @@ class ProgrammingQuoteListRenderer : QuoteListRenderer {
         }
     }
 
-
     private fun QuoteListFragment.renderLoading() {
         quotes_list_loader.visible()
     }
@@ -107,5 +106,4 @@ class ProgrammingQuoteListRenderer : QuoteListRenderer {
             }
         })
     }
-
 }

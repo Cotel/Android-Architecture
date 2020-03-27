@@ -10,4 +10,3 @@ object QuoteItemDiff : DiffUtil.ItemCallback<Quote>() {
     override fun areContentsTheSame(oldItem: Quote, newItem: Quote): Boolean =
         oldItem == newItem
 }
-

@@ -45,7 +45,7 @@ class ChuckNorrisQuoteListRenderer : QuoteListRenderer {
     }
 
     override fun renderState(viewState: QuoteListViewModel.ViewState) {
-        with (fragment) {
+        with(fragment) {
             resetScreen()
 
             when (viewState) {

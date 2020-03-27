@@ -19,5 +19,4 @@ class ChuckNorrisQuotesNetworkDataSource(
                 .map { async { service.getRandomQuote() } }
                 .map { it.await().toQuote() }
         }
-
 }

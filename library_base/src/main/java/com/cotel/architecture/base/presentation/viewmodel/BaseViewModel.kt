@@ -15,5 +15,4 @@ abstract class BaseViewModel<VS, SE> : ViewModel() {
     protected val _sideEffects = Channel<SE>()
     val sideEffects: ReceiveChannel<SE>
         get() = _sideEffects
-
 }

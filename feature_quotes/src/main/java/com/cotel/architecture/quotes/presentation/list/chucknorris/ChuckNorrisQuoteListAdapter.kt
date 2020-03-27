@@ -27,11 +27,10 @@ class ChuckNorrisQuoteListAdapter :
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(quote: Quote) {
-            with (itemView) {
+            with(itemView) {
                 quote_author.text = quote.author
                 quote_text.text = quote.text
             }
         }
     }
-
 }

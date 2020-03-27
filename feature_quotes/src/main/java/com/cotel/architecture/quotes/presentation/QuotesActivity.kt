@@ -3,7 +3,7 @@ package com.cotel.architecture.quotes.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.cotel.architecture.quotes.R
-import com.cotel.architecture.quotes.presentation.list.*
+import com.cotel.architecture.quotes.presentation.list.QuoteListFragment
 
 class QuotesActivity : AppCompatActivity() {
     companion object {
