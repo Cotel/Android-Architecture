@@ -9,7 +9,7 @@ object AndroidConfig {
 
     const val ID = "com.cotel.architecture"
     const val TEST_INSTRUMENTATION_RUNNER =
-        "android.support.test.runner.AndroidJUnitRunner"
+        "androidx.test.runner.AndroidJUnitRunner"
 }
 
 interface BuildType {

@@ -1,0 +1,6 @@
+<manifest package="com.cotel.architecture.base"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <activity android:name=".EmptyActivity"/>
+    </application>
+</manifest>

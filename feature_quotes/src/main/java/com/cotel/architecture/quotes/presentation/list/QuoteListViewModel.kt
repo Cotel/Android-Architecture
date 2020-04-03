@@ -7,7 +7,9 @@ import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.domain.repository.QuotesRepository
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.SideEffect
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.ViewState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 import kotlin.properties.Delegates
 
 class QuoteListViewModel(
