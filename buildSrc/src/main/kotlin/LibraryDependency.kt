@@ -23,7 +23,7 @@ internal object LibraryVersion {
 
     const val KOIN = "2.1.4"
 
-    const val ARROW = "0.10.4"
+    const val ARROW = "0.10.5"
 }
 
 object LibraryDependency {
@@ -82,4 +82,6 @@ object LibraryDependency {
     const val ARROW_CORE = "io.arrow-kt:arrow-core:${LibraryVersion.ARROW}"
     const val ARROW_SYNTAX = "io.arrow-kt:arrow-syntax:${LibraryVersion.ARROW}"
     const val ARROW_FX = "io.arrow-kt:arrow-fx:${LibraryVersion.ARROW}"
+    const val ARROW_COROUTINES_FX = "io.arrow-kt:arrow-fx-kotlinx-coroutines:${LibraryVersion.ARROW}"
+    const val ARROW_UI = "io.arrow-kt:arrow-ui:${LibraryVersion.ARROW}"
 }

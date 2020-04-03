@@ -53,6 +53,8 @@ dependencies {
 
     api(LibraryDependency.ARROW_CORE)
     api(LibraryDependency.ARROW_SYNTAX)
+    api(LibraryDependency.ARROW_UI)
+    implementation(LibraryDependency.ARROW_FX)
 
     api(LibraryDependency.APP_COMPACT)
     api(LibraryDependency.COROUTINES_ANDROID)

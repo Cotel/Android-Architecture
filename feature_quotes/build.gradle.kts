@@ -54,6 +54,7 @@ dependencies {
     implementation(project(ModuleDependency.LIBRARY_NETWORK))
 
     implementation(LibraryDependency.ARROW_FX)
+    implementation(LibraryDependency.ARROW_COROUTINES_FX)
 
     implementation(LibraryDependency.ROOM)
     implementation(LibraryDependency.ROOM_KTX)

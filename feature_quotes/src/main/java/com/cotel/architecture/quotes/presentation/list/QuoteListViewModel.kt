@@ -1,158 +1,117 @@
 package com.cotel.architecture.quotes.presentation.list
 
-import androidx.lifecycle.viewModelScope
-import com.cotel.architecture.base.infrastructure.PaginationState
+import arrow.fx.IO
+import arrow.fx.extensions.fx
 import com.cotel.architecture.base.presentation.viewmodel.BaseViewModel
 import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.domain.repository.QuotesRepository
+import com.cotel.architecture.quotes.presentation.list.QuoteListStore.Action
+import com.cotel.architecture.quotes.presentation.list.QuoteListStore.Filter
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.SideEffect
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.ViewState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
-import kotlin.properties.Delegates
 
 class QuoteListViewModel(
     private val repository: QuotesRepository
 ) : BaseViewModel<ViewState, SideEffect>() {
 
-    private var internalState: QuotesState by Delegates
-        .observable(QuotesState()) { _, _, newValue ->
-            if (newValue.pagination.isLoading) {
-                _viewState.value = ViewState.Loading
-                return@observable
-            }
-
-            if (newValue.hasError) {
-                _viewState.value = ViewState.Error
-                return@observable
-            }
-
-            when (newValue.currentFilter) {
-                Filter.DISCOVER -> _viewState.value = ViewState
-                    .DataLoaded(newValue.allQuotes)
-                Filter.SAVED -> _viewState.value = ViewState
-                    .DataLoaded(newValue.savedQuotes)
-            }
+    private val store = QuoteListStore { state ->
+        if (state.pagination.isLoading) {
+            _viewState.value = ViewState.Loading
+            return@QuoteListStore
         }
 
-    init {
-        loadAllQuotes()
-    }
-
-    fun loadAllQuotes(forceRefresh: Boolean = false) {
-        if (internalState.currentFilter == Filter.SAVED) return
-
-        if (forceRefresh) {
-            internalState = internalState.copy(pagination = PaginationState())
+        if (state.hasError) {
+            _viewState.value = ViewState.Error
+            return@QuoteListStore
         }
 
-        val pagination = internalState.pagination
-
-        if (pagination.canRequestNextPage()) {
-            viewModelScope.launch {
-                internalState = internalState
-                    .copy(pagination = pagination.isLoading())
-                repository.getQuotes(pagination.page)
-                    .attempt()
-                    .unsafeRunSync()
-                    .fold(
-                        ifLeft = { handlePageLoadError() },
-                        ifRight = this@QuoteListViewModel::handlePageLoadSuccess
-                    )
-            }
+        when (state.currentFilter) {
+            Filter.DISCOVER -> _viewState.value = ViewState
+                .DataLoaded(state.allQuotes)
+            Filter.SAVED -> _viewState.value = ViewState
+                .DataLoaded(state.savedQuotes)
         }
     }
 
-    private fun loadSavedQuotes() {
-        viewModelScope.launch {
-            repository.getSavedQuotes()
+    fun loadAllQuotes(forceRefresh: Boolean = false): IO<Unit> =
+        IO.fx {
+            var currentState = store.getCurrentState().bind()
+
+            if (currentState.currentFilter == Filter.SAVED)
+                return@fx
+
+            if (!currentState.pagination.canRequestNextPage())
+                return@fx
+
+
+            !effect { store.dispatch(Action.FetchQuotes(forceRefresh)) }
+            currentState = store.getCurrentState().bind()
+
+            val result = repository.getQuotes(currentState.pagination.page)
                 .attempt()
-                .unsafeRunSync()
-                .fold(
-                    ifLeft = { },
-                    ifRight = {
-                        internalState = internalState.copy(savedQuotes = it)
+                .bind()
+
+            result.fold(
+                ifLeft = {
+                    !effect {
+                        store.dispatch(Action.FetchQuotesError(it))
                     }
-                )
-        }
-    }
-
-    fun handleDiscoverFilterPressed() {
-        internalState = internalState.copy(currentFilter = Filter.DISCOVER)
-    }
-
-    fun handleSavedFilterPressed() {
-        internalState = internalState.copy(currentFilter = Filter.SAVED)
-        loadSavedQuotes()
-    }
-
-    fun handleQuoteClicked(quote: Quote) {
-        viewModelScope.launch {
-            if (!quote.isSaved) {
-                repository.saveQuote(quote)
-                    .attempt()
-                    .unsafeRunSync()
-                    .fold(
-                        ifLeft = {
-                            _sideEffects
-                                .send(SideEffect.ErrorSavingQuote(quote))
-                        },
-                        ifRight = {
-                            val copy = quote.copy(isSaved = true)
-                            updateQuote(copy)
-                        }
-                    )
-            } else {
-                repository.removeQuote(quote)
-                    .attempt()
-                    .unsafeRunSync()
-                    .fold(
-                        ifLeft = {
-                            _sideEffects
-                                .send(SideEffect.ErrorRemovingQuote(quote))
-                        },
-                        ifRight = {
-                            val copy = quote.copy(isSaved = false)
-                            updateQuote(copy)
-                        }
-                    )
-            }
-        }
-    }
-
-    private fun handlePageLoadSuccess(quotes: List<Quote>) {
-        val pagination = internalState.pagination
-        val allQuotes = internalState.allQuotes
-
-        internalState = internalState.copy(
-            pagination = pagination
-                .isNotLoading()
-                .nextPage(),
-            allQuotes = allQuotes + quotes
-        )
-    }
-
-    private fun handlePageLoadError() {
-        val pagination = internalState.pagination
-
-        internalState = internalState.copy(
-            pagination = pagination
-                .isNotLoading()
-                .noMorePages(),
-            hasError = true
-        )
-    }
-
-    private fun updateQuote(quote: Quote) {
-        internalState = internalState.copy(
-            allQuotes = internalState
-                .allQuotes
-                .map {
-                    if (it.id == quote.id) quote else it
+                },
+                ifRight = {
+                    !effect {
+                        store.dispatch(Action.FetchQuotesSuccess(it))
+                    }
                 }
-        )
-    }
+            )
+        }
+
+    private fun loadSavedQuotes(): IO<Unit> =
+        IO.effect { store.dispatch(Action.FetchSavedQuotes) }
+            .flatMap { repository.getSavedQuotes() }
+            .flatMap {
+                IO.effect {
+                    store.dispatch(Action.FetchSavedQuotesSuccess(it))
+                }
+            }
+
+
+    fun handleDiscoverFilterPressed(): IO<Unit> =
+        IO.effect { store.dispatch(Action.ChangeQuotesFilter(Filter.DISCOVER)) }
+
+
+    fun handleSavedFilterPressed(): IO<Unit> =
+        IO.effect { store.dispatch(Action.ChangeQuotesFilter(Filter.SAVED)) }
+            .flatMap { loadSavedQuotes() }
+
+    fun handleQuoteClicked(quote: Quote): IO<Unit> =
+        if (!quote.isSaved) {
+            handleQuoteClicked(quote,
+                { repository.saveQuote(it) },
+                { _sideEffects.send(SideEffect.ErrorSavingQuote(quote)) },
+                { store.dispatch(Action.SaveQuote(quote)) }
+            )
+        } else {
+            handleQuoteClicked(quote,
+                { repository.removeQuote(it) },
+                { _sideEffects.send(SideEffect.ErrorRemovingQuote(quote)) },
+                { store.dispatch(Action.UnsaveQuote(quote)) }
+            )
+        }
+
+    private fun handleQuoteClicked(
+        quote: Quote,
+        quoteOperation: (Quote) -> IO<Unit>,
+        onQuoteOperationError: suspend (Throwable) -> Unit,
+        onQuoteOperationSuccess: suspend () -> Unit
+    ): IO<Unit> =
+        quoteOperation(quote)
+            .attempt()
+            .flatMap { result ->
+                result.fold(
+                    { IO.effect { onQuoteOperationError(it) } },
+                    { IO.effect { onQuoteOperationSuccess() } }
+                )
+            }
 
     sealed class ViewState {
         object Loading : ViewState()
@@ -161,20 +120,10 @@ class QuoteListViewModel(
         data class DataLoaded(val quotes: List<Quote>) : ViewState()
     }
 
-    private data class QuotesState(
-        val hasError: Boolean = false,
-        val allQuotes: List<Quote> = emptyList(),
-        val savedQuotes: List<Quote> = emptyList(),
-        val currentFilter: Filter = Filter.DISCOVER,
-        val pagination: PaginationState = PaginationState()
-    )
 
     sealed class SideEffect {
         data class ErrorSavingQuote(val quote: Quote) : SideEffect()
         data class ErrorRemovingQuote(val quote: Quote) : SideEffect()
     }
 
-    private enum class Filter {
-        DISCOVER, SAVED;
-    }
 }
