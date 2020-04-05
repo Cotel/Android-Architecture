@@ -1,31 +1,41 @@
 package com.cotel.architecture.base.presentation.mvi
 
-import arrow.fx.ForIO
-import arrow.fx.IO
-import arrow.fx.Ref
-import arrow.fx.extensions.io.monad.flatTap
-import arrow.fx.extensions.io.monadDefer.monadDefer
-import arrow.fx.fix
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
-typealias Reducer<S, A> = (A, S) -> S
-typealias Observer<S> = suspend (S) -> Unit
+@FlowPreview
+@ExperimentalCoroutinesApi
+open class Store<S>(initialState: S) {
 
-abstract class Store<S, A>(
-    initialState: S,
-    private val reducer: Reducer<S, A>,
-    private val observer: Observer<S>
-) {
+    private val scope = MainScope()
+    private val store = ConflatedBroadcastChannel<S>(initialState)
+    private val actions = Channel<Intent<S>>()
 
-    private val state: Ref<ForIO, S> = Ref.unsafe(initialState, IO.monadDefer())
+    init {
+        scope.launch {
+            while (scope.isActive)
+                store.offer(actions.receive().reduce(store.value))
+        }
+    }
 
-    fun getCurrentState(): IO<S> = state.get().fix()
+    fun latestState(): Flow<S> = store.asFlow()
 
-    suspend fun dispatch(action: A) {
-        state
-            .updateAndGet { currentState -> reducer(action, currentState) }
-            .flatTap { IO.effect(Dispatchers.Main) { observer(it) } }
-            .suspended()
+    suspend fun dispatch(intent: Intent<S>) {
+        actions.send(intent)
+    }
+
+    fun close() {
+        store.close()
+        actions.close()
+        scope.cancel()
     }
 
 }

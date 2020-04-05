@@ -3,15 +3,24 @@ package com.cotel.architecture.quotes.presentation.list.programming
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.cotel.architecture.base.presentation.extension.clicks
+import com.cotel.architecture.base.presentation.extension.endlessScroll
 import com.cotel.architecture.base.presentation.extension.gone
+import com.cotel.architecture.base.presentation.extension.safeOffer
 import com.cotel.architecture.base.presentation.extension.visible
-import com.cotel.architecture.base.presentation.recyclerview.EndlessScrollListener
 import com.cotel.architecture.quotes.R
+import com.cotel.architecture.quotes.domain.model.Quote
+import com.cotel.architecture.quotes.extensions.tabSelections
 import com.cotel.architecture.quotes.presentation.list.QuoteListFragment
 import com.cotel.architecture.quotes.presentation.list.QuoteListRenderer
-import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.ViewState
-import com.google.android.material.tabs.TabLayout
+import com.cotel.architecture.quotes.presentation.list.QuoteListViewActions
+import com.cotel.architecture.quotes.presentation.list.QuoteListViewState
 import kotlinx.android.synthetic.main.fragment_programming_quote_list.*
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.map
 
 class ProgrammingQuoteListRenderer : QuoteListRenderer {
     companion object {
@@ -20,39 +29,57 @@ class ProgrammingQuoteListRenderer : QuoteListRenderer {
     }
 
     private lateinit var fragment: QuoteListFragment
-    private lateinit var callbacks: QuoteListRenderer.Callbacks
+
+    private val quoteListItemClicks = ConflatedBroadcastChannel<Quote>()
 
     private val adapter: ProgrammingQuoteListAdapter by lazy {
-        ProgrammingQuoteListAdapter(
-            callbacks::handleQuoteClicked
-        )
+        ProgrammingQuoteListAdapter { quote ->
+            quoteListItemClicks.safeOffer(quote)
+        }
     }
 
     @LayoutRes
     override fun getLayoutRes(): Int = R.layout.fragment_programming_quote_list
 
-    override fun setup(
-        fragment: QuoteListFragment,
-        callbacks: QuoteListRenderer.Callbacks
-    ) {
+    override fun setup(fragment: QuoteListFragment) {
         this.fragment = fragment
-        this.callbacks = callbacks
 
         with(fragment) {
             setupUI()
         }
     }
 
-    override fun renderState(viewState: ViewState) {
+    override fun renderState(viewState: QuoteListViewState) {
         with(fragment) {
             resetScreen()
             when (viewState) {
-                ViewState.Loading -> renderLoading()
-                ViewState.Error -> renderErrorLoading()
-                is ViewState.DataLoaded -> renderDataLoaded(
+                QuoteListViewState.Loading -> renderLoading()
+                QuoteListViewState.Error -> renderErrorLoading()
+                is QuoteListViewState.Loaded -> renderDataLoaded(
                     viewState
                 )
             }
+        }
+    }
+
+    override fun actions(): Flow<QuoteListViewActions> {
+        with (fragment) {
+            val flows = listOf(
+                quotes_list_retry_button.clicks()
+                    .map { QuoteListViewActions.RetryFetchQuotesPressed },
+                quotes_list_recyclerview.endlessScroll()
+                    .map { QuoteListViewActions.ScrollEndReached },
+                quotes_tabs.tabSelections()
+                    .map { tab -> when (tab.position) {
+                        SAVED_TAB_POSITION -> QuoteListViewActions.SavedTabSelected
+                        else -> QuoteListViewActions.DiscoverTabSelected
+                    } },
+                quoteListItemClicks.asFlow().map { quote ->
+                    QuoteListViewActions.QuoteClicked(quote)
+                }
+            )
+
+            return flows.asFlow().flattenMerge(flows.size)
         }
     }
 
@@ -62,9 +89,6 @@ class ProgrammingQuoteListRenderer : QuoteListRenderer {
 
     private fun QuoteListFragment.renderErrorLoading() {
         quotes_list_error.visible()
-        quotes_list_retry_button.setOnClickListener {
-            callbacks.handleRetryLoadingQuotes()
-        }
     }
 
     private fun QuoteListFragment.resetScreen() {
@@ -72,8 +96,8 @@ class ProgrammingQuoteListRenderer : QuoteListRenderer {
         quotes_list_error.gone()
     }
 
-    private fun renderDataLoaded(viewState: ViewState.DataLoaded) {
-        adapter.submitList(viewState.quotes)
+    private fun renderDataLoaded(viewState: QuoteListViewState.Loaded) {
+        adapter.submitList(viewState.content)
     }
 
     private fun QuoteListFragment.setupUI() {
@@ -86,24 +110,6 @@ class ProgrammingQuoteListRenderer : QuoteListRenderer {
                     DividerItemDecoration.VERTICAL
                 )
             )
-            it.addOnScrollListener(
-                EndlessScrollListener { callbacks.handleLoadMorePages() }
-            )
         }
-
-        quotes_tabs.addOnTabSelectedListener(object :
-            TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                when (tab.position) {
-                    DISCOVER_TAB_POSITION -> callbacks
-                        .handleDiscoverFilterPressed()
-                    SAVED_TAB_POSITION -> callbacks
-                        .handleSavedFilterPressed()
-                }
-            }
-        })
     }
 }

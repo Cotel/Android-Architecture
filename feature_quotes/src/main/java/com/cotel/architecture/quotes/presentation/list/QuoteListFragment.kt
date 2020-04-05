@@ -1,79 +1,57 @@
 package com.cotel.architecture.quotes.presentation.list
 
 import android.os.Bundle
-import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.LayoutRes
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import arrow.core.getOrHandle
-import arrow.fx.IO
-import arrow.integrations.kotlinx.unsafeRunScoped
-import com.cotel.architecture.base.presentation.fragment.BaseViewModelFragment
-import com.cotel.architecture.quotes.domain.model.Quote
-import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.SideEffect
-import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.ViewState
+import com.cotel.architecture.quotes.domain.store.QuoteListStore
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.scope.viewModel
 import org.koin.androidx.scope.lifecycleScope as koinScope
 
-class QuoteListFragment : BaseViewModelFragment<ViewState,
-    SideEffect,
-    QuoteListViewModel>(),
-    QuoteListRenderer.Callbacks {
+class QuoteListFragment : Fragment() {
 
     companion object {
         fun newInstance() = QuoteListFragment()
     }
 
-    override val viewModel: QuoteListViewModel by koinScope.viewModel(this)
+    private val viewModel: QuoteListViewModel by koinScope.viewModel(this)
     private val renderer: QuoteListRenderer by koinScope.inject()
 
-    @LayoutRes
-    override fun layoutRes(): Int = renderer.getLayoutRes()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View =
+        inflater.inflate(renderer.getLayoutRes(), container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        renderer.setup(this)
 
-        renderer.setup(this, this)
+        renderer.actions()
+            .onEach { viewModel.handleViewAction(it) }
+            .launchIn(lifecycleScope)
 
-        viewModel.loadAllQuotes(true)
-            .unsafeRunScoped()
-    }
+        viewModel.viewState
+            .onEach { renderViewState(it) }
+            .launchIn(lifecycleScope)
 
-    override fun renderViewState(viewState: ViewState) {
-        renderer.renderState(viewState)
-    }
-
-    override fun handleQuoteClicked(quote: Quote) {
-        viewModel.handleQuoteClicked(quote)
-            .unsafeRunScoped()
-    }
-
-    override fun handleLoadMorePages() {
-        viewModel.loadAllQuotes()
-            .unsafeRunScoped()
-    }
-
-    override fun handleDiscoverFilterPressed() {
-        viewModel.handleDiscoverFilterPressed()
-            .unsafeRunScoped()
-    }
-
-    override fun handleSavedFilterPressed() {
-        viewModel.handleSavedFilterPressed()
-            .unsafeRunScoped()
-    }
-
-    override fun handleRetryLoadingQuotes() {
-        viewModel.loadAllQuotes(forceRefresh = true)
-            .unsafeRunScoped()
-    }
-
-    override fun handleSideEffect(sideEffect: SideEffect) {
-        when (sideEffect) {
-            is SideEffect.ErrorSavingQuote -> showErrorSaveQuoteToast()
-            is SideEffect.ErrorRemovingQuote -> showErrorRemoveQuoteToast()
+        lifecycleScope.launch {
+            viewModel.handleViewAction(QuoteListViewActions.StartScreen)
         }
+
+    }
+
+    private fun renderViewState(viewState: QuoteListViewState) {
+        renderer.renderState(viewState)
     }
 
     private fun showErrorSaveQuoteToast() {
@@ -91,11 +69,4 @@ class QuoteListFragment : BaseViewModelFragment<ViewState,
             Toast.LENGTH_SHORT
         ).show()
     }
-
-    private fun IO<Unit>.unsafeRunScoped() =
-        unsafeRunScoped(lifecycleScope) { execution ->
-            execution.getOrHandle {
-                Log.e("QuoteListFragment", "FATAL ERROR", it)
-            }
-        }
 }

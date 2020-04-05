@@ -12,7 +12,6 @@ import com.cotel.architecture.quotes.R
 import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.domain.repository.QuotesRepository
 import com.cotel.architecture.quotes.presentation.list.QuoteListFragment
-import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel
 import io.mockk.coEvery
 import io.mockk.mockkClass
 import kotlinx.coroutines.delay

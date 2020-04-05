@@ -2,6 +2,7 @@ package com.cotel.architecture.quotes.presentation
 
 import com.cotel.architecture.quotes.data.chuckNorrisQuoteListDataModule
 import com.cotel.architecture.quotes.data.programmingQuoteListDataModule
+import com.cotel.architecture.quotes.domain.store.QuoteListStore
 import com.cotel.architecture.quotes.presentation.list.QuoteListFragment
 import com.cotel.architecture.quotes.presentation.list.QuoteListRenderer
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel
@@ -28,9 +29,11 @@ private val loadProgrammingFeature by lazy {
 private val programmingQuoteListModule = module {
     scope<QuoteListFragment> {
         scoped<QuoteListRenderer> { ProgrammingQuoteListRenderer() }
+        scoped<QuoteListStore> { QuoteListStore() }
 
         viewModel {
             QuoteListViewModel(
+                store = get(),
                 repository = get()
             )
         }
@@ -58,9 +61,11 @@ private val loadChuckNorrisFeature by lazy {
 private val chuckNorrisQuoteListModule = module {
     scope<QuoteListFragment> {
         scoped<QuoteListRenderer> { ChuckNorrisQuoteListRenderer() }
+        scoped<QuoteListStore> { QuoteListStore() }
 
         viewModel {
             QuoteListViewModel(
+                store = get(),
                 repository = get()
             )
         }
