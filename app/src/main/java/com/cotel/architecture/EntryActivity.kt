@@ -12,8 +12,6 @@ import kotlinx.android.synthetic.main.activity_entry.*
 class EntryActivity : AppCompatActivity() {
 
     companion object {
-        private const val FEATURE_FLAG = "FEATURE_FLAG"
-
         private const val CN_FLAG = "CHUCK_NORRIS"
         private const val PM_FLAG = "PROGRAMMING"
     }
@@ -57,13 +55,18 @@ class EntryActivity : AppCompatActivity() {
     private fun navigateToQuotesFeature(flag: String) {
         if (splitInstallManager.installedModules.contains("feature_quotes")) {
             val intent = Intent()
-            intent.setClassName(
-                BuildConfig.APPLICATION_ID,
-                "com.cotel.architecture.quotes.presentation.QuotesActivity"
-            )
-            intent.putExtra(FEATURE_FLAG, flag)
+            if (flag == CN_FLAG) {
+                intent.setClassName(
+                    BuildConfig.APPLICATION_ID,
+                    "com.cotel.architecture.quotes.presentation.ChuckNorrisQuotesActivity"
+                )
+            } else {
+                intent.setClassName(
+                    BuildConfig.APPLICATION_ID,
+                    "com.cotel.architecture.quotes.presentation.ProgrammingQuotesActivity"
+                )
+            }
             startActivity(intent)
-            finish()
         }
     }
 }

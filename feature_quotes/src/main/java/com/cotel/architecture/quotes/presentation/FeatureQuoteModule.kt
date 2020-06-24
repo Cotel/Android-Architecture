@@ -15,21 +15,13 @@ import org.koin.dsl.module
 // Programming modules
 
 fun injectProgrammingFeature() =
-    loadProgrammingFeature
-
-fun ejectProgrammingFeature() {
-    unloadKoinModules(allProgrammingModules)
-}
-
-private val loadProgrammingFeature by lazy {
     loadKoinModules(allProgrammingModules)
-}
 
 private val programmingQuoteListModule = module {
     scope<QuoteListFragment> {
-        scoped<QuoteListRenderer> { ProgrammingQuoteListRenderer() }
+        scoped<QuoteListRenderer>(override = true) { ProgrammingQuoteListRenderer() }
 
-        viewModel {
+        viewModel(override = true) {
             QuoteListViewModel(
                 repository = get()
             )
@@ -45,21 +37,13 @@ val allProgrammingModules = listOf(
 // Chuck Norris modules
 
 fun injectChuckNorrisFeature() =
-    loadChuckNorrisFeature
-
-fun ejectChuckNorrisFeature() {
-    unloadKoinModules(allChuckNorrisModules)
-}
-
-private val loadChuckNorrisFeature by lazy {
     loadKoinModules(allChuckNorrisModules)
-}
 
 private val chuckNorrisQuoteListModule = module {
     scope<QuoteListFragment> {
-        scoped<QuoteListRenderer> { ChuckNorrisQuoteListRenderer() }
+        scoped<QuoteListRenderer>(override = true) { ChuckNorrisQuoteListRenderer() }
 
-        viewModel {
+        viewModel(override = true) {
             QuoteListViewModel(
                 repository = get()
             )

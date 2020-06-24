@@ -10,17 +10,17 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.dsl.module
 
 val programmingQuoteListDataModule = module {
-    single { QuoteDatabase(androidApplication()) }
+    single(override = true) { QuoteDatabase(androidApplication()) }
 
-    single { get<QuoteDatabase>().quoteDao() }
+    single(override = true) { get<QuoteDatabase>().quoteDao() }
 
-    single { ProgrammingQuotesService.create() }
+    single(override = true) { ProgrammingQuotesService.create() }
 
-    single { QuotesLocalDatasource(dao = get()) }
+    single(override = true) { QuotesLocalDatasource(dao = get()) }
 
-    single { ProgrammingQuotesNetworkDataSource(service = get()) }
+    single(override = true) { ProgrammingQuotesNetworkDataSource(service = get()) }
 
-    single<QuotesRepository> {
+    single<QuotesRepository>(override = true) {
         ProgrammingQuotesRepository(
             localDataSource = get(),
             networkDataSource = get()

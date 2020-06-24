@@ -7,11 +7,11 @@ import com.cotel.architecture.quotes.domain.repository.QuotesRepository
 import org.koin.dsl.module
 
 val chuckNorrisQuoteListDataModule = module {
-    single { ChuckNorrisQuotesService.create() }
+    single(override = true) { ChuckNorrisQuotesService.create() }
 
-    single { ChuckNorrisQuotesNetworkDataSource(service = get()) }
+    single(override = true) { ChuckNorrisQuotesNetworkDataSource(service = get()) }
 
-    single<QuotesRepository> {
+    single<QuotesRepository>(override = true) {
         ChuckNorrisQuotesRepository(networkDataSource = get())
     }
 }
