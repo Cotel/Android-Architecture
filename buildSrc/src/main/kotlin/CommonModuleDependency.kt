@@ -15,9 +15,6 @@ fun DependencyHandler.addTestDependencies() {
     androidTestImplementation(TestLibraryDependency.TEST_RUNNER)
     androidTestImplementation(TestLibraryDependency.TEST_RULES)
 
-    testImplementation(TestLibraryDependency.KOIN_TEST)
-    androidTestImplementation(TestLibraryDependency.KOIN_TEST)
-
     testImplementation(TestLibraryDependency.MOCKK)
     androidTestImplementation(TestLibraryDependency.MOCKK_ANDROID)
 }

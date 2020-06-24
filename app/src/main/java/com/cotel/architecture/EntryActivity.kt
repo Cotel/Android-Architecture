@@ -57,13 +57,19 @@ class EntryActivity : AppCompatActivity() {
     private fun navigateToQuotesFeature(flag: String) {
         if (splitInstallManager.installedModules.contains("feature_quotes")) {
             val intent = Intent()
-            intent.setClassName(
-                BuildConfig.APPLICATION_ID,
-                "com.cotel.architecture.quotes.presentation.QuotesActivity"
-            )
-            intent.putExtra(FEATURE_FLAG, flag)
+
+            if (flag == PM_FLAG) {
+                intent.setClassName(
+                    BuildConfig.APPLICATION_ID,
+                    "com.cotel.architecture.quotes.presentation.ProgrammingQuotesActivity"
+                )
+            } else {
+                intent.setClassName(
+                    BuildConfig.APPLICATION_ID,
+                    "com.cotel.architecture.quotes.presentation.ChuckNorrisQuotesActivity"
+                )
+            }
             startActivity(intent)
-            finish()
         }
     }
 }

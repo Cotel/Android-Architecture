@@ -3,15 +3,12 @@ package com.cotel.architecture
 import android.app.Application
 import android.content.Context
 import com.google.android.play.core.splitcompat.SplitCompat
-import org.koin.android.ext.koin.androidContext
-import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.startKoin
 
-class ArchitectureApp : Application() {
+class ArchitectureApp : Application(), ApplicationComponentProvider {
 
     override fun onCreate() {
         super.onCreate()
-        initKoin()
+        getApplicationComponent().inject(this)
     }
 
     override fun attachBaseContext(base: Context?) {
@@ -19,10 +16,11 @@ class ArchitectureApp : Application() {
         SplitCompat.install(this)
     }
 
-    private fun initKoin() {
-        startKoin {
-            androidContext(this@ArchitectureApp)
-            if (BuildConfig.DEBUG) androidLogger()
-        }
-    }
+    override fun getApplicationComponent(): ApplicationComponent =
+        DaggerApplicationComponent.builder()
+            .applicationModule(getApplicationModule())
+            .build()
+
+    private fun getApplicationModule(): ApplicationModule =
+        ApplicationModule(this)
 }

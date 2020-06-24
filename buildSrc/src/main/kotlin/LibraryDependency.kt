@@ -21,7 +21,7 @@ internal object LibraryVersion {
 
     const val COIL = "0.9.1"
 
-    const val KOIN = "2.1.4"
+    const val DAGGER = "2.28.1"
 
     const val ARROW = "0.10.4"
 }
@@ -38,11 +38,8 @@ object LibraryDependency {
     const val RETROFIT_MOSHI_CONVERTER =
         "com.squareup.retrofit2:converter-moshi:${LibraryVersion.RETROFIT}"
 
-    const val KOIN_CORE = "org.koin:koin-core:${LibraryVersion.KOIN}"
-    const val KOIN_ANDROIDX =
-        "org.koin:koin-androidx-scope:${LibraryVersion.KOIN}"
-    const val KOIN_VIEWMODEL =
-        "org.koin:koin-androidx-viewmodel:${LibraryVersion.KOIN}"
+    const val DAGGER =  "com.google.dagger:dagger:${LibraryVersion.DAGGER}"
+    const val DAGGER_KAPT = "com.google.dagger:dagger-compiler:${LibraryVersion.DAGGER}"
 
     // Retrofit will use okhttp 4 (it tas binary capability with okhttp 3)
     // See: https://square.github.io/okhttp/upgrading_to_okhttp_4/

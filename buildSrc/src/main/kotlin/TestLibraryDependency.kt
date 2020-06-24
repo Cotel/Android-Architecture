@@ -21,8 +21,6 @@ object TestLibraryDependency {
     const val ANDROID_X_CORE_TESTING =
         "android.arch.core:core-testing:${TestLibraryVersion.ANDROID_X_TEST}"
 
-    const val KOIN_TEST = "org.koin:koin-test:${LibraryVersion.KOIN}"
-
     const val MOCKK = "io.mockk:mockk:${TestLibraryVersion.MOCKK}"
     const val MOCKK_ANDROID = "io.mockk:mockk-android:${TestLibraryVersion.MOCKK}"
 }

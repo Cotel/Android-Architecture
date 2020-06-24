@@ -6,6 +6,7 @@ plugins {
     id(GradlePluginId.KOTLIN_ANDROID)
     id(GradlePluginId.KOTLIN_ANDROID_EXTENSIONS)
     id(GradlePluginId.KTLINT_GRADLE)
+    kotlin(GradlePluginId.KOTLIN_ANNOTATION_PROCESSOR)
 }
 
 android {
@@ -76,9 +77,8 @@ dependencies {
 
     implementation(LibraryDependency.PLAY_CORE)
 
-    api(LibraryDependency.KOIN_CORE)
-    api(LibraryDependency.KOIN_ANDROIDX)
-    api(LibraryDependency.KOIN_VIEWMODEL)
+    api(LibraryDependency.DAGGER)
+    kapt(LibraryDependency.DAGGER_KAPT)
 
     api(LibraryDependency.SUPPORT_CONSTRAINT_LAYOUT)
     api(LibraryDependency.COORDINATOR_LAYOUT)

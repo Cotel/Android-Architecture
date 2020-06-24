@@ -8,21 +8,15 @@ import com.cotel.architecture.base.presentation.fragment.BaseViewModelFragment
 import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.SideEffect
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.ViewState
-import org.koin.androidx.scope.lifecycleScope
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.androidx.viewmodel.scope.viewModel
+import javax.inject.Inject
 
-class QuoteListFragment : BaseViewModelFragment<ViewState,
+abstract class QuoteListFragment : BaseViewModelFragment<ViewState,
     SideEffect,
     QuoteListViewModel>(),
     QuoteListRenderer.Callbacks {
 
-    companion object {
-        fun newInstance() = QuoteListFragment()
-    }
-
-    override val viewModel: QuoteListViewModel by lifecycleScope.viewModel(this)
-    private val renderer: QuoteListRenderer by lifecycleScope.inject()
+    @Inject override lateinit var viewModel: QuoteListViewModel
+    @Inject lateinit var renderer: QuoteListRenderer
 
     @LayoutRes
     override fun layoutRes(): Int = renderer.getLayoutRes()
