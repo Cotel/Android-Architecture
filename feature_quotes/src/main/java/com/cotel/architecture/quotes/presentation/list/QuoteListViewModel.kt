@@ -3,16 +3,19 @@ package com.cotel.architecture.quotes.presentation.list
 import androidx.lifecycle.viewModelScope
 import com.cotel.architecture.base.infrastructure.PaginationState
 import com.cotel.architecture.base.presentation.viewmodel.BaseViewModel
+import com.cotel.architecture.quotes.di.QuotesListScope
 import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.domain.repository.QuotesRepository
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.SideEffect
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.ViewState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 import kotlin.properties.Delegates
 
-class QuoteListViewModel(
+@QuotesListScope
+class QuoteListViewModel @Inject constructor(
     private val repository: QuotesRepository
 ) : BaseViewModel<ViewState, SideEffect>() {
 

@@ -2,9 +2,12 @@ package com.cotel.architecture.quotes.data.datasource
 
 import com.cotel.architecture.quotes.data.mapper.ProgrammingQuotesMapper
 import com.cotel.architecture.quotes.data.network.ProgrammingQuotesService
+import com.cotel.architecture.quotes.di.QuotesListScope
 import com.cotel.architecture.quotes.domain.model.Quote
+import javax.inject.Inject
 
-class ProgrammingQuotesNetworkDataSource(
+@QuotesListScope
+class ProgrammingQuotesNetworkDataSource @Inject constructor(
     private val service: ProgrammingQuotesService
 ) : ProgrammingQuotesMapper {
 

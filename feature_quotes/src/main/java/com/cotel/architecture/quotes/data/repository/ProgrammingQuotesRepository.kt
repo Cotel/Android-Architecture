@@ -4,10 +4,13 @@ import arrow.fx.IO
 import arrow.fx.extensions.fx
 import com.cotel.architecture.quotes.data.datasource.ProgrammingQuotesNetworkDataSource
 import com.cotel.architecture.quotes.data.datasource.QuotesLocalDatasource
+import com.cotel.architecture.quotes.di.QuotesListScope
 import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.domain.repository.QuotesRepository
+import javax.inject.Inject
 
-class ProgrammingQuotesRepository(
+@QuotesListScope
+class ProgrammingQuotesRepository @Inject constructor(
     private val networkDataSource: ProgrammingQuotesNetworkDataSource,
     private val localDataSource: QuotesLocalDatasource
 ) : QuotesRepository {

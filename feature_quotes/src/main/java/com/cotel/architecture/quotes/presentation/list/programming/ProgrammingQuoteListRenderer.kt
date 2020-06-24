@@ -7,13 +7,16 @@ import com.cotel.architecture.base.presentation.extension.gone
 import com.cotel.architecture.base.presentation.extension.visible
 import com.cotel.architecture.base.presentation.recyclerview.EndlessScrollListener
 import com.cotel.architecture.quotes.R
+import com.cotel.architecture.quotes.di.QuotesListScope
 import com.cotel.architecture.quotes.presentation.list.QuoteListFragment
 import com.cotel.architecture.quotes.presentation.list.QuoteListRenderer
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel.ViewState
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_programming_quote_list.*
+import javax.inject.Inject
 
-class ProgrammingQuoteListRenderer : QuoteListRenderer {
+@QuotesListScope
+class ProgrammingQuoteListRenderer @Inject constructor() : QuoteListRenderer {
     companion object {
         private const val DISCOVER_TAB_POSITION = 0
         private const val SAVED_TAB_POSITION = 1

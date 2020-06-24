@@ -2,10 +2,13 @@ package com.cotel.architecture.quotes.data.repository
 
 import arrow.fx.IO
 import com.cotel.architecture.quotes.data.datasource.ChuckNorrisQuotesNetworkDataSource
+import com.cotel.architecture.quotes.di.QuotesListScope
 import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.domain.repository.QuotesRepository
+import javax.inject.Inject
 
-class ChuckNorrisQuotesRepository(
+@QuotesListScope
+class ChuckNorrisQuotesRepository @Inject constructor(
     private val networkDataSource: ChuckNorrisQuotesNetworkDataSource
 ) : QuotesRepository {
 

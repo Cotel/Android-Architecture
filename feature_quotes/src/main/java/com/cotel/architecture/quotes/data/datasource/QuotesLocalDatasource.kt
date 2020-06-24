@@ -2,9 +2,12 @@ package com.cotel.architecture.quotes.data.datasource
 
 import com.cotel.architecture.quotes.data.local.QuoteDao
 import com.cotel.architecture.quotes.data.mapper.RoomQuotesMapper
+import com.cotel.architecture.quotes.di.QuotesListScope
 import com.cotel.architecture.quotes.domain.model.Quote
+import javax.inject.Inject
 
-class QuotesLocalDatasource(
+@QuotesListScope
+class QuotesLocalDatasource @Inject constructor(
     private val dao: QuoteDao
 ) : RoomQuotesMapper {
     suspend fun getSavedQuotes(): List<Quote> =

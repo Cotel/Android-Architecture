@@ -2,11 +2,14 @@ package com.cotel.architecture.quotes.data.datasource
 
 import com.cotel.architecture.quotes.data.mapper.ChuckNorrisQuotesMapper
 import com.cotel.architecture.quotes.data.network.ChuckNorrisQuotesService
+import com.cotel.architecture.quotes.di.QuotesListScope
 import com.cotel.architecture.quotes.domain.model.Quote
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import javax.inject.Inject
 
-class ChuckNorrisQuotesNetworkDataSource(
+@QuotesListScope
+class ChuckNorrisQuotesNetworkDataSource @Inject constructor(
     private val service: ChuckNorrisQuotesService
 ) : ChuckNorrisQuotesMapper {
     companion object {

@@ -7,13 +7,16 @@ import coil.api.load
 import com.cotel.architecture.base.presentation.extension.gone
 import com.cotel.architecture.base.presentation.extension.visible
 import com.cotel.architecture.quotes.R
+import com.cotel.architecture.quotes.di.QuotesListScope
 import com.cotel.architecture.quotes.domain.model.Quote
 import com.cotel.architecture.quotes.presentation.list.QuoteListFragment
 import com.cotel.architecture.quotes.presentation.list.QuoteListRenderer
 import com.cotel.architecture.quotes.presentation.list.QuoteListViewModel
 import kotlinx.android.synthetic.main.fragment_chucknorris_quote_list.*
+import javax.inject.Inject
 
-class ChuckNorrisQuoteListRenderer : QuoteListRenderer {
+@QuotesListScope
+class ChuckNorrisQuoteListRenderer @Inject constructor() : QuoteListRenderer {
     companion object {
         private const val CN_LOADING_IMAGE_URL =
             "https://www.quien.net/wp-content/uploads/Chuck-Norris-241x300.jpg"
